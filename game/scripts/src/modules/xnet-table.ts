@@ -1,5 +1,3 @@
-import { reloadable } from '../utils/tstl-utils';
-
 function get_table_size(t: any) {
     // 如果不是table，那么直接返回长度
     if (type(t) !== `table`) {
@@ -82,7 +80,9 @@ export class XNetTable {
         key: TKey,
         value: TStruct[TKey]
     ): void {
-        if (!IsServer()) return;
+        if (!IsServer()) {
+            return;
+        }
         const key_name = tostring(key);
         this._data[tname] ??= {};
         value = value ?? ({} as TStruct[TKey]);
@@ -107,7 +107,9 @@ export class XNetTable {
         key: TKey,
         value: TStruct[TKey]
     ): void {
-        if (!IsServer()) return;
+        if (!IsServer()) {
+            return;
+        }
 
         const key_name = tostring(key);
         this._player_data[playerId] ??= {};
@@ -247,7 +249,9 @@ export class XNetTable {
     private _onPlayerConnectFull(keys: GameEventProvidedProperties & GameEventDeclarations[`player_connect_full`]) {
         const playerId = keys.PlayerID;
         const player = PlayerResource.GetPlayer(playerId);
-        if (player == null) return;
+        if (player == null) {
+            return;
+        }
 
         // 发送所有的全局共享数据
         for (const tname in this._data) {
@@ -257,10 +261,14 @@ export class XNetTable {
             }
         }
         // 发送所有这个玩家独享的数据
-        if (this._player_data[playerId] == null) return;
+        if (this._player_data[playerId] == null) {
+            return;
+        }
         for (const tname in this._player_data[playerId]) {
             const table = this._player_data[playerId]![tname];
-            if (table == null) continue;
+            if (table == null) {
+                continue;
+            }
             for (const key in table) {
                 // @ts-expect-error
                 this._appendUpdateRequest(playerId, tname, key, table[key]);
@@ -313,4 +321,8 @@ export class XNetTable {
             return FrameTime();
         });
     }
+}
+
+declare global {
+    var XNetTable: XNetTable;
 }

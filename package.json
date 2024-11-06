@@ -1,8 +1,8 @@
 {
-    "name": "x_template",
-    "description": "a ts-react template for dota2 modding, together with some helper scripts",
+    "name": "dota2_mota",
+    "description": "Dota2 Magic Tower",
     "license": "MIT",
-    "repository": "https://github.com/XavierCHN/x-template",
+    "repository": "https://github.com/MouJiaoZi/d2mota",
     "scripts": {
         "lint": "eslint --ext .js,.ts,.tsx --quiet --fix \"./content/panorama/src/**/*.{js,ts,tsx}\" \"./game/scripts/src/**/*.{js,ts,tsx}\" \"./scripts/**/*.{js,ts,tsx}\"",
         "postinstall": "node scripts/install.js",
@@ -21,6 +21,7 @@
         "api": "openapi --input scripts/server_api.json --output game/scripts/src/server --exportCore false && node scripts/clean_api.js"
     },
     "devDependencies": {
+        "sunlight-dota2-utils": "1.5.1",
         "@babel/core": "^7.16.5",
         "@babel/preset-env": "^7.16.5",
         "@babel/preset-react": "^7.16.5",
@@ -79,5 +80,8 @@
     },
     "engines": {
         "node": ">=16.0.0"
-    }
+    },
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "Moujiaozi <moujiaozi@outlook.com>"
 }

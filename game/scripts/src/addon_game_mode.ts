@@ -1,5 +1,6 @@
-import 'utils/index';
-import { ActivateModules } from './modules';
+import 'sunlight-dota2-utils/dist/index';
+import 'utils/_index';
+import { ActivateModules } from './modules/_index';
 import Precache from './utils/precache';
 
 Object.assign(getfenv(), {
@@ -8,3 +9,5 @@ Object.assign(getfenv(), {
     },
     Precache: Precache,
 });
+
+import './blocks/_index';

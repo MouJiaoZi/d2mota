@@ -2,11 +2,7 @@
     "parser": "@typescript-eslint/parser",
     "extends": ["plugin:prettier/recommended", "plugin:react-hooks/recommended"],
     "settings": {
-        "import/resolver": {
-            "node": {
-                "extensions": [".js", ".ts", ".jsx", ".tsx"]
-            }
-        },
+        "import/resolver": { "node": { "extensions": [".js", ".ts", ".jsx", ".tsx"] } },
         "import/extensions": [".js", ".ts", ".jsx", ".tsx"]
     },
     "plugins": ["@typescript-eslint", "import", "prettier", "react", "react-hooks"],
@@ -32,16 +28,45 @@
         "@typescript-eslint/consistent-type-imports": [
             "error",
             {
-                "prefer": "type-imports"
+                "prefer": "type-imports",
+                "disallowTypeAnnotations": false
+                // "fixStyle": "separate-type-imports"
             }
         ],
-        "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
-        "prefer-const": "error",
-        "no-eval": "error",
         "no-redeclare": "off",
         "import/no-anonymous-default-export": "off",
         "@typescript-eslint/no-redeclare": ["off"],
         "react-hooks/exhaustive-deps": "warn",
-        "react-hooks/rules-of-hooks": "error"
+        "react-hooks/rules-of-hooks": "error",
+        "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+        // 强制dafault在最后
+        "default-case-last": "error",
+        // 构造函数必须super
+        "constructor-super": "error",
+        "no-var": "off",
+        "no-this-before-super": "error",
+        // this的别名规定为that
+        // "consistent-this": ["error", "that"],
+        // "curly": ["error", "multi-line"],
+        // "array-bracket-newline": ["error", "consistent"],
+        // "array-element-newline": ["error", "consistent"],
+        // 箭头函数必须使用括号
+        // "arrow-parens": ["error", "consistent"],
+        // 函数参数换行
+        "function-call-argument-newline": ["error", "consistent"],
+        "new-parens": "error",
+        "prefer-const": "error",
+        // 考虑到preferconst的自动修复，合并声明还是never比较好。
+        "one-var": ["error", "never"],
+        // 变量初始化值不需要手动赋为undefined
+        "no-undef-init": "error",
+        // 立即执行函数的括号位置
+        "wrap-iife": ["error", "inside"],
+        // 单行语句必须不换号
+        "nonblock-statement-body-position": ["error", "beside", { "overrides": { "while": "below" } }],
+        // 箭头函数体换行
+        // "implicit-arrow-linebreak": ["error", "below"]
+        //强制补全大括号
+        "curly": [2, "all"],
     }
 }

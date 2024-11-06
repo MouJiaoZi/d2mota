@@ -5,7 +5,11 @@ if (global.reloadCache === undefined) {
     global.reloadCache = {};
 }
 
-export function reloadable<T extends { new (...args: any[]): {} }>(constructor: T): T {
+function reloadable<T extends { new (...args: any[]): {} }>(constructor: T): T {
+    if (!IsInToolsMode()) {
+        return constructor;
+    }
+
     const className = constructor.name;
     if (global.reloadCache[className] === undefined) {
         global.reloadCache[className] = constructor;
