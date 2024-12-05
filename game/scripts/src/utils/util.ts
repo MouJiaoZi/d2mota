@@ -68,7 +68,7 @@ function SLPrint(this: void, ...str: any[]): void {
     if (!IsInToolsMode()) {
         return;
     }
-    const prefix = '[SunLight]';
+    const prefix = '[ToolsMode]';
     print(prefix, ...str);
 }
 
@@ -76,14 +76,14 @@ function SLWarning(this: void, ...str: any[]): void {
     if (!IsInToolsMode()) {
         return;
     }
-    const prefix = '[SunLight Warning]';
+    const prefix = '[ToolsMode Warning]';
     print(prefix, ...str);
     err_info = `${prefix} ${str.join(' ')}`;
     print(debug.traceback());
 }
 
 function SLError(this: void, ...str: any[]): void {
-    const prefix = '[SunLight Error]';
+    const prefix = '[ToolsMode Error]';
     err_info = `${prefix} ${str.join(' ')}`;
     print(prefix, ...str, '\n', debug.traceback());
     assert(false, 'debug.traceback()');

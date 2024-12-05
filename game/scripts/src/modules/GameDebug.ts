@@ -74,27 +74,10 @@ export class GameDebug {
     private RegisterMyFunction(): void {
         SLPrint('注册了Debug Command');
         this.Register('', '1', (unit, player, params) => {
-            const buff = unit.AddNewModifier(unit, null, 'modifier_phased', {});
-            Timers.CreateTimer(3, () => {
-                SLPrint(buff.GetRemainingTime());
-            });
+            CustomGrid.DebugShowGrid();
         });
         this.Register('', '2', (unit, player, params) => {});
-        this.Register('', '3', (unit, player, params) => {
-            const t1 = Plat_FloatTime();
-            const v1 = Vector(0, 0, 0);
-            const v2 = Vector(1000, 1000, 0);
-            for (let i = 0; i < 100000; i++) {
-                GridNav.CanFindPath(v1, v2);
-            }
-            const t2 = Plat_FloatTime();
-            for (let i = 0; i < 100000; i++) {
-                GridNav.IsTraversable(v2);
-            }
-            const t3 = Plat_FloatTime();
-            SLPrint('CanFindPath', t2 - t1);
-            SLPrint('IsTraversable', t3 - t2);
-        });
+        this.Register('', '3', (unit, player, params) => {});
         this.Register('', '4', (unit, player, params) => {
             // unit.FindClearSpaceForUnit(Vector(-5025, -5258));
             const map_min_x = GetWorldMinX();
@@ -126,6 +109,19 @@ export class GameDebug {
                     // });
                 }
             }
+        });
+        this.Register('', 'r', () => {
+            SLPrint(`重载前内存 ${collectgarbage('count')}`);
+            collectgarbage('collect');
+            SendToServerConsole('script_reload');
+            SendToServerConsole('cl_script_reload');
+            GameRules.Playtesting_UpdateAddOnKeyValues();
+            FireGameEvent('client_reload_game_keyvalues', {});
+            collectgarbage('collect');
+            SLPrint(`重载后内存 ${collectgarbage('count')}`);
+        });
+        this.Register('', 'rs', () => {
+            SendToServerConsole('restart');
         });
     }
 

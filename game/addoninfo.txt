@@ -5,10 +5,10 @@
 	IsTemplate = false
 	maps = 
 	[
-		"dota",
+		"temp",
 	]
 	CheckAFKPlayers = false
-	DefaultMap = "dota"
+	DefaultMap = "temp"
 	Default_Keys = 
 	[
 	]
@@ -20,13 +20,13 @@
 	ForceDefaultGuide = false
 	MinimalPrecache = false
 	MinPlayers = 1
-	MaxPlayers = 10
+	MaxPlayers = 16
 	map_options = 
 	[
 		{
-			map = "dota"
+			map = "temp"
 		},
 	]
 	PenaltiesEnabled = false
-	TeamCount = -1
+	TeamCount = 1
 }
