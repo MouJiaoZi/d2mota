@@ -73,7 +73,12 @@ export class GameDebug {
     /**要注册的Debug指令写在这里，统一在这里写吧 */
     private RegisterMyFunction(): void {
         SLPrint('注册了Debug Command');
-        this.Register('', '1', (unit, player, params) => {});
+        this.Register('', '1', (unit, player, params) => {
+            const buff = unit.AddNewModifier(unit, null, 'modifier_phased', {});
+            Timers.CreateTimer(3, () => {
+                SLPrint(buff.GetRemainingTime());
+            });
+        });
         this.Register('', '2', (unit, player, params) => {});
         this.Register('', '3', (unit, player, params) => {
             const t1 = Plat_FloatTime();
