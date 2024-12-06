@@ -1,5 +1,8 @@
 declare interface GridData {
     center: Vector;
     index: number;
-    block: any;
+    x: number;
+    y: number;
+    blocks: CBaseMTBlock[];
+    floor: CMTBlock_Floor;
 }

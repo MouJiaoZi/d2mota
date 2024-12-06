@@ -4,9 +4,6 @@ export class CustomGridNav {
         SLPrint('CustomGridNav constructor');
     }
 
-    /**每个格子有多大 */
-    public readonly GridSize = 256;
-
     /**格子在横向、纵向的数量 */
     public readonly GridColRows = 11;
 
@@ -35,7 +32,7 @@ export class CustomGridNav {
         for (let i = 0; i < this.BoardCols; i++) {
             for (let j = 0; j < this.BoardRows; j++) {
                 //获取格子的中心点
-                const center = this.GetGridCenter(i, j);
+                const center = this.GetGridCenter(j, i);
                 _delay = _delay + 1;
                 const delay = _delay;
                 const id = `${delay}: ${i}_${j}`;
@@ -50,7 +47,7 @@ export class CustomGridNav {
                     DebugDrawCircle(center, Vector(0, 0, 255), 10, 10, true, 10);
                     //这是第几个？
                     //单个棋盘总宽或者
-                    const width = this.GridColRows * this.GridSize;
+                    const width = this.GridColRows * GridSize;
                     //棋盘左上角
                     const boardleftTop = (center + Vector(-width / 2, width / 2)) as Vector;
                     //黄色标记
@@ -59,12 +56,12 @@ export class CustomGridNav {
                     for (let x = 0; x < this.GridColRows; x++) {
                         for (let y = 0; y < this.GridColRows; y++) {
                             //找出格子的中心点 应该是
-                            const gridCenter = (boardleftTop + Vector((x + 0.5) * this.GridSize, -(y + 0.5) * this.GridSize)) as Vector;
+                            const gridCenter = (boardleftTop + Vector((x + 0.5) * GridSize, -(y + 0.5) * GridSize)) as Vector;
                             //得出左上、左下、右下、右上四个点
-                            const leftTop = (gridCenter + Vector(-this.GridSize / 2, this.GridSize / 2)) as Vector;
-                            const leftBottom = (gridCenter + Vector(-this.GridSize / 2, -this.GridSize / 2)) as Vector;
-                            const rightBottom = (gridCenter + Vector(this.GridSize / 2, -this.GridSize / 2)) as Vector;
-                            const rightTop = (gridCenter + Vector(this.GridSize / 2, this.GridSize / 2)) as Vector;
+                            const leftTop = (gridCenter + Vector(-GridSize / 2, GridSize / 2)) as Vector;
+                            const leftBottom = (gridCenter + Vector(-GridSize / 2, -GridSize / 2)) as Vector;
+                            const rightBottom = (gridCenter + Vector(GridSize / 2, -GridSize / 2)) as Vector;
+                            const rightTop = (gridCenter + Vector(GridSize / 2, GridSize / 2)) as Vector;
                             //画出格子的四条边
                             DebugDrawLine(leftTop, rightTop, 255, 255, 255, true, 10);
                             DebugDrawLine(rightTop, rightBottom, 255, 255, 255, true, 10);
@@ -90,7 +87,14 @@ export class CustomGridNav {
         for (let i = 0; i < this.BoardCols; i++) {
             for (let j = 0; j < this.BoardRows; j++) {
                 const center = this.GetGridCenter(i, j);
-                this.m_GridInstances.push(new GridInstance(center));
+                const grid = new GridInstance(center, this.m_GridInstances.length);
+                this.m_GridInstances.push(grid);
+                //给格子生成地板
+                for (const gridData1 of Object.values(grid.m_pGridData)) {
+                    for (const gridData of Object.values(gridData1)) {
+                        gridData.floor = new CMTBlock_Floor(grid.m_iBoardIndex, gridData.x, gridData.y);
+                    }
+                }
             }
         }
     }
@@ -101,27 +105,34 @@ export class CustomGridNav {
 }
 
 class GridInstance {
-    private _grid_map: GridData[][] = [];
+    public readonly m_pGridData: GridData[][] = [];
+    public readonly m_iBoardIndex: number = -1;
 
-    constructor(center: Vector) {
+    constructor(center: Vector, index: number) {
+        this.m_iBoardIndex = index;
         //单个棋盘总宽或者
-        const width = CustomGrid.GridColRows * CustomGrid.GridSize;
+        const width = CustomGrid.GridColRows * GridSize;
         //棋盘左上角
         const boardleftTop = (center + Vector(-width / 2, width / 2)) as Vector;
-        for (let x = 0; x < CustomGrid.GridColRows; x++) {
-            this._grid_map[x] = [];
-            for (let y = 0; y < CustomGrid.GridColRows; y++) {
+        for (let col = 0; col < CustomGrid.GridColRows; col++) {
+            this.m_pGridData[col] = [];
+            for (let row = 0; row < CustomGrid.GridColRows; row++) {
                 //找出格子的中心点 应该是
-                const gridCenter = (boardleftTop + Vector((x + 0.5) * CustomGrid.GridSize, -(y + 0.5) * CustomGrid.GridSize)) as Vector;
-                this._grid_map[x][y] = {
+                const gridCenter = (boardleftTop + Vector((col + 0.5) * GridSize, -(row + 0.5) * GridSize)) as Vector;
+                const index = row * CustomGrid.GridColRows + col;
+                this.m_pGridData[col][row] = {
                     center: gridCenter,
-                    index: x * CustomGrid.GridColRows + y,
-                    block: null,
+                    index: index,
+                    x: col,
+                    y: row,
+                    blocks: [],
+                    floor: null,
                 };
+                DebugDrawText(gridCenter, `${index},${col},${row}`, true, 30);
             }
         }
-        // SLPrint('GridInstance', center);
-        // DeepPrintTable(this._grid_map);
+        SLPrint('GridInstance', center, index);
+        // DeepPrintTable(this.m_pGridData);
     }
 }
 
