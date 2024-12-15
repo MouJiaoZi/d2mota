@@ -21,7 +21,6 @@
         "api": "openapi --input scripts/server_api.json --output game/scripts/src/server --exportCore false && node scripts/clean_api.js"
     },
     "devDependencies": {
-        "sunlight-dota2-utils": "1.5.1",
         "@babel/core": "^7.16.5",
         "@babel/preset-env": "^7.16.5",
         "@babel/preset-react": "^7.16.5",
@@ -68,6 +67,7 @@
         "replace-in-file-webpack-plugin": "^1.0.6",
         "rimraf": "^3.0.2",
         "steam-game-path": "^2.0.1",
+        "sunlight-dota2-utils": "1.5.1",
         "terser-webpack-plugin": "^5.3.4",
         "ts-loader": "^8.1.0",
         "ts-node": "^10.7.0",
