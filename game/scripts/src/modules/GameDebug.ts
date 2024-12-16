@@ -76,7 +76,9 @@ export class GameDebug {
         this.Register('', '1', (unit, player, params) => {
             CustomGrid.DebugShowGrid();
         });
-        this.Register('', '2', (unit, player, params) => {});
+        this.Register('', '2', (unit, player, params) => {
+            SLPrint(CustomGrid.m_GridInstances[0].GridDataArray.length);
+        });
         this.Register('', '3', (unit, player, params) => {});
         this.Register('', '4', (unit, player, params) => {
             // unit.FindClearSpaceForUnit(Vector(-5025, -5258));

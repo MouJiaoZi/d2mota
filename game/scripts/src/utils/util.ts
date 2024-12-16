@@ -37,7 +37,6 @@ function SaveError(msg: string) {
     msg = err_info || msg;
     err_info = null;
     PrintToChat(msg);
-    print(msg);
     //重复的错误不保存
     ErrorStrArr = ErrorStrArr || [];
     //最多暂存200个错误
@@ -64,42 +63,56 @@ function SaveError(msg: string) {
     }
 }
 
+//NOTE 由于dota2控制台的单次print有最大字符数限制，所以这里做了分割处理 大概是2000字符
 function SLPrint(this: void, ...str: any[]): void {
     if (!IsInToolsMode()) {
         return;
     }
-    const prefix = '[ToolsMode]';
-    print(prefix, ...str);
+    const prefix = '[SunLight]';
+    const to_print = string.format(str.map(v => '%s').join(' '), ...str);
+    const blocks = math.ceil(to_print.length / 2000);
+    for (let i = 0; i < blocks; i++) {
+        if (i == 0) {
+            print(prefix, to_print.slice(i * 2000, (i + 1) * 2000));
+        } else {
+            print(to_print.slice(i * 2000, (i + 1) * 2000));
+        }
+    }
+    // print(prefix, string.format(str.map((v) => "%s").join(" "), ...str));
 }
 
 function SLWarning(this: void, ...str: any[]): void {
     if (!IsInToolsMode()) {
         return;
     }
-    const prefix = '[ToolsMode Warning]';
-    print(prefix, ...str);
+    const prefix = '[SunLight Warning]';
+    const to_print = string.format(str.map(v => '%s').join(' '), ...str);
+    const blocks = math.ceil(to_print.length / 2000);
+    for (let i = 0; i < blocks; i++) {
+        if (i == 0) {
+            print(prefix, to_print.slice(i * 2000, (i + 1) * 2000));
+        } else {
+            print(to_print.slice(i * 2000, (i + 1) * 2000));
+        }
+    }
     err_info = `${prefix} ${str.join(' ')}`;
-    print(debug.traceback());
+    debug.traceback();
 }
 
 function SLError(this: void, ...str: any[]): void {
-    const prefix = '[ToolsMode Error]';
+    const prefix = '[SunLight Error]';
     err_info = `${prefix} ${str.join(' ')}`;
-    print(prefix, ...str, '\n', debug.traceback());
+    const to_print = string.format(str.map(v => '%s').join(' '), ...str);
+    const blocks = math.ceil(to_print.length / 2000);
+    for (let i = 0; i < blocks; i++) {
+        if (i == 0) {
+            print(prefix, to_print.slice(i * 2000, (i + 1) * 2000));
+        } else {
+            print(to_print.slice(i * 2000, (i + 1) * 2000));
+        }
+    }
+    debug.traceback();
     assert(false, 'debug.traceback()');
-    // Service.Request(0, {
-    //     url: "/api/game/v1/gameLog/save",
-    //     body: {
-    //         info: null,
-    //         error: debug.traceback(),
-    //         version: "v1",
-    //         roleId: "0",
-    //         matchId: tostring(GameRules.Script_GetMatchID()),
-    //     },
-    //     noRetry: true,
-    //     noPubCall: true,
-    //     noStopAfterReload: true,
-    // });
 }
 
 function PrintToChat(...str: any[]): void {

@@ -17,7 +17,7 @@ export class EngineHook {
 
     private _OnGameRulesStateChange(): void {
         const state = GameRules.State_Get();
-        if (state == GameState.PRE_GAME) {
+        if (state == GameState.GAME_IN_PROGRESS) {
             CustomGrid.CreatePlayerGrid();
         }
     }

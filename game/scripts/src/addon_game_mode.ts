@@ -11,4 +11,5 @@ Object.assign(getfenv(), {
     Precache: Precache,
 });
 
+import './blocks/decorate';
 import './blocks/_index';

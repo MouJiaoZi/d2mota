@@ -92,7 +92,7 @@ export class CustomGridNav {
                 //给格子生成地板
                 for (const gridData1 of Object.values(grid.m_pGridData)) {
                     for (const gridData of Object.values(gridData1)) {
-                        gridData.floor = new CMTBlock_Floor(grid.m_iBoardIndex, gridData.x, gridData.y);
+                        gridData.floor = new CMTBlock_Floor(grid.m_iBoardIndex, gridData.x, gridData.y, -1 as TowerFloorID);
                     }
                 }
             }
@@ -105,8 +105,19 @@ export class CustomGridNav {
 }
 
 class GridInstance {
+    /**格子的数据 */
     public readonly m_pGridData: GridData[][] = [];
+    /**棋盘索引 */
     public readonly m_iBoardIndex: number = -1;
+    /**棋盘的当前楼层ID */
+    private _m_CurrentFloorID: TowerFloorID = 0 as TowerFloorID;
+    public get m_CurrentFloorID(): TowerFloorID {
+        return this._m_CurrentFloorID;
+    }
+
+    public set m_CurrentFloorID(value: TowerFloorID) {
+        this._m_CurrentFloorID = value;
+    }
 
     constructor(center: Vector, index: number) {
         this.m_iBoardIndex = index;
@@ -125,14 +136,47 @@ class GridInstance {
                     index: index,
                     x: col,
                     y: row,
-                    blocks: [],
+                    floor_blocks: {},
+                    block_floor: {},
+                    floor_inited: {},
                     floor: null,
                 };
-                DebugDrawText(gridCenter, `${index},${col},${row}`, true, 30);
+                // DebugDrawText(gridCenter, `${index},${col},${row}`, true, 30);
             }
         }
-        SLPrint('GridInstance', center, index);
+        // SLPrint('GridInstance', center, index);
         // DeepPrintTable(this.m_pGridData);
+    }
+
+    public get GridDataArray(): GridData[] {
+        return this.m_pGridData.flat();
+    }
+
+    //切换楼层
+    public SwitchToFloor(floorID: TowerFloorID): void {
+        const old_floor = this._m_CurrentFloorID;
+        // 新旧楼层相同，直接返回
+        if (old_floor == floorID) {
+            return;
+        }
+        //如果新旧楼层不同，遍历所有格子
+        for (const grid of this.GridDataArray) {
+            //隐藏旧楼层的方块
+            const old_block = grid.floor_blocks[old_floor];
+            if (old_block) {
+                old_block.AddNoDraw();
+            }
+            //如果新楼层已经初始化了，显示新楼层的方块
+            if (grid.floor_inited[floorID]) {
+                const new_block = grid.floor_blocks[floorID];
+                if (new_block) {
+                    new_block.RemoveNoDraw();
+                }
+            } else {
+                //如果新楼层没有初始化，初始化新楼层
+                //TODO 初始化新楼层
+            }
+        }
     }
 }
 
