@@ -9,6 +9,7 @@ const registerBlock =
         if (ID_TO_BLOCK[iBlockID]) {
             SLError('registerBlock: 方块ID重复', constructor.name, '原方块', ID_TO_BLOCK[iBlockID].name);
         }
+        SLPrint('registerBlock', iBlockID, constructor.name);
         ID_TO_BLOCK[iBlockID] = constructor;
         reloadable(constructor);
     };

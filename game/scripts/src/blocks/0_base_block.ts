@@ -39,8 +39,6 @@ abstract class CBaseMTBlock {
         this._m_bTreavalable = value;
     }
 
-    /**该方块的Z轴优先级 不可小于0 */
-    public readonly m_iZIndex: number = 0;
     /**该方块的实体 */
     protected m_pEntity: CBaseEntity = null;
     /**该方块所在楼层 */
@@ -58,17 +56,6 @@ abstract class CBaseMTBlock {
         this.m_iFloorID = iFloorID;
         //生成实体
         this.EntitySpawnFunction();
-        //根据Z轴优先级设置高度
-        if (this.m_iZIndex < 0) {
-            SLWarning(this.constructor.name, '的Z轴优先级小于0，将被修正为0');
-        }
-        if (math.floor(this.m_iZIndex) != this.m_iZIndex) {
-            SLWarning(this.constructor.name, '的Z轴优先级不是整数，将被四舍五入');
-        }
-        this.m_iZIndex = math.floor(math.max(0, this.m_iZIndex) + 0.5);
-        if (this.m_iZIndex == 0 && this.constructor.name != 'CMTBlock_Floor') {
-            SLWarning(this.constructor.name, '的Z轴优先级为0，与地板相同了');
-        }
         //实体是否存在
         if (!this.m_pEntity) {
             SLError('CBaseMTBlock: 实体生成错误，找不到实体');
@@ -77,8 +64,32 @@ abstract class CBaseMTBlock {
         this.SetToGridIndex(iGridX, iGridY);
     }
 
+    /**该方块的Z轴优先级 不可小于0 */
+    private _m_iZIndex: number = 0;
+    public get m_iZIndex(): number {
+        return this._m_iZIndex;
+    }
+
+    public set m_iZIndex(value: number) {
+        this._m_iZIndex = value;
+        //根据Z轴优先级设置高度
+        if (this._m_iZIndex < 0) {
+            SLWarning(this.constructor.name, '的Z轴优先级小于0，将被修正为0');
+        }
+        if (math.floor(this._m_iZIndex) != this._m_iZIndex) {
+            SLWarning(this.constructor.name, '的Z轴优先级不是整数，将被四舍五入');
+        }
+        this._m_iZIndex = math.floor(math.max(0, this._m_iZIndex) + 0.5);
+        if (this.m_iZIndex == 0 && this.constructor.name != 'CMTBlock_Floor') {
+            SLWarning(this.constructor.name, '的Z轴优先级为0，与地板相同了');
+        }
+        const target_pos = this.m_pEntity.GetAbsOrigin();
+        target_pos.z = this.m_iZIndex;
+        this.m_pEntity.SetAbsOrigin(target_pos);
+    }
+
     /**
-     * 实体生成函数
+     * 实体生成函数，记得在这里设置zIndex
      */
     protected abstract EntitySpawnFunction(): void;
 
@@ -119,7 +130,7 @@ abstract class CBaseMTBlock {
     }
 
     /**面朝方向 */
-    private _m_Direction: BlockFaceDirection = 'TOP';
+    private _m_Direction: BlockFaceDirection = 'UP';
 
     public get m_Direction(): BlockFaceDirection {
         return this._m_Direction;
@@ -133,7 +144,7 @@ abstract class CBaseMTBlock {
         //根据方向设置角度
         let angle = 0;
         switch (sDirection) {
-            case 'TOP':
+            case 'UP':
                 angle = 0;
                 break;
             case 'DOWN':
@@ -149,7 +160,7 @@ abstract class CBaseMTBlock {
                 SLWarning(this.constructor.name, '设置方向错误');
                 break;
         }
-        this.m_Direction = sDirection;
+        this._m_Direction = sDirection;
         this.m_pEntity.SetAbsAngles(0, angle, 0);
 
         //调试绘制

@@ -18,7 +18,8 @@
         "dev:vscripts": "tstl --project game/scripts/tsconfig.json --watch",
         "compile": "node scripts/compile.js",
         "jssync": "gulp jssync",
-        "api": "openapi --input scripts/server_api.json --output game/scripts/src/server --exportCore false && node scripts/clean_api.js"
+        "api": "openapi --input scripts/server_api.json --output game/scripts/src/server --exportCore false && node scripts/clean_api.js",
+        "test": "gulp tower_config"
     },
     "devDependencies": {
         "@babel/core": "^7.16.5",
@@ -33,6 +34,7 @@
         "@types/gulp-less": "^0.0.33",
         "@types/node": "^18.0.0",
         "@types/react": "^16.14.5",
+        "@types/through2": "^2.0.41",
         "@typescript-eslint/eslint-plugin": "^5.36.0",
         "@typescript-eslint/parser": "^5.36.0",
         "@typescript-to-lua/language-extensions": "^1.0.0",

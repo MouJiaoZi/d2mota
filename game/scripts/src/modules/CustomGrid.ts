@@ -1,3 +1,5 @@
+import * as TowerConfig from '../json/tower_config.json';
+
 @reloadable
 export class CustomGridNav {
     constructor() {
@@ -95,6 +97,7 @@ export class CustomGridNav {
                         gridData.floor = new CMTBlock_Floor(grid.m_iBoardIndex, gridData.x, gridData.y, -1 as TowerFloorID);
                     }
                 }
+                grid.SwitchToFloor(1 as TowerFloorID);
             }
         }
     }
@@ -119,6 +122,8 @@ class GridInstance {
         this._m_CurrentFloorID = value;
     }
 
+    private _m_FloorInited: Record<TowerFloorID, boolean> = {};
+
     constructor(center: Vector, index: number) {
         this.m_iBoardIndex = index;
         //单个棋盘总宽或者
@@ -138,10 +143,9 @@ class GridInstance {
                     y: row,
                     floor_blocks: {},
                     block_floor: {},
-                    floor_inited: {},
                     floor: null,
                 };
-                // DebugDrawText(gridCenter, `${index},${col},${row}`, true, 30);
+                DebugDrawText(gridCenter, `${index},${col},${row}`, true, 30);
             }
         }
         // SLPrint('GridInstance', center, index);
@@ -160,21 +164,52 @@ class GridInstance {
             return;
         }
         //如果新旧楼层不同，遍历所有格子
+        //遍历所有格子
         for (const grid of this.GridDataArray) {
             //隐藏旧楼层的方块
             const old_block = grid.floor_blocks[old_floor];
             if (old_block) {
                 old_block.AddNoDraw();
             }
-            //如果新楼层已经初始化了，显示新楼层的方块
-            if (grid.floor_inited[floorID]) {
+        }
+        //如果新楼层已经初始化了，显示新楼层的方块
+        if (this._m_FloorInited[floorID]) {
+            for (const grid of this.GridDataArray) {
                 const new_block = grid.floor_blocks[floorID];
                 if (new_block) {
                     new_block.RemoveNoDraw();
                 }
+            }
+        } else {
+            //如果新楼层没有初始化，初始化新楼层
+            this._m_FloorInited[floorID] = true;
+            // 初始化新楼层
+            if (TowerConfig.floors[tostring(floorID)]) {
+                //有配置，生成方块
+                for (const block_info of TowerConfig.floors[tostring(floorID)]) {
+                    const block_id = (tonumber(block_info['block_id']) || -1) as BlockTypeID;
+                    const row = block_info['row'];
+                    const col = block_info['col'];
+                    const type = block_info['type'] as 'TELE' | 'NORMAL';
+                    const face = block_info['face'] as 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
+                    const constructor = GetBlockConstructor(block_id);
+                    if (constructor) {
+                        switch (type) {
+                            case 'TELE':
+                                break;
+                            case 'NORMAL':
+                                const block = new constructor(this.m_iBoardIndex, col, row, floorID);
+                                if (block) {
+                                    block.m_Direction = face;
+                                }
+                                break;
+                        }
+                    } else {
+                        SLWarning('Block not found', block_id);
+                    }
+                }
             } else {
-                //如果新楼层没有初始化，初始化新楼层
-                //TODO 初始化新楼层
+                SLWarning('Floor Config not found', floorID);
             }
         }
     }
